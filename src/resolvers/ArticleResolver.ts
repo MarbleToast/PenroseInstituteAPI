@@ -1,6 +1,8 @@
 import { Arg, Mutation, Query, Resolver } from "type-graphql"
+import { app } from ".."
 
-import { Article } from "../types/Article"
+import { Article } from "../types/Article/Article"
+import { ArticleInput } from "../types/Article/ArticleInput"
 
 @Resolver(() => Article)
 export class ArticleResolver {
@@ -8,7 +10,7 @@ export class ArticleResolver {
 
     @Query(() => Article, { nullable: true })
     async getArticle(@Arg("title") titleToFind: string): Promise<Article | undefined> {
-        return await this.items.find(({ title }) => title == titleToFind)
+        return await app.locals.pool.query("SELECT * FROM articles WHERE title = $1", [titleToFind])
     }
 
     @Query(() => [Article])
@@ -17,7 +19,7 @@ export class ArticleResolver {
     }
 
     @Mutation(() => Article)
-    async addArticle(@Arg("article") input: Article): Promise<Article> {
+    async addArticle(@Arg("article") input: ArticleInput): Promise<Article> {
         const a = Object.assign(new Article(), {
             title: input.title,
             content: input.content,
