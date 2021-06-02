@@ -1,5 +1,2 @@
 node_modules
-build/webpack.js
-build/bundle.js
-build/bundle.js
-build/bundle.js
+build/*
