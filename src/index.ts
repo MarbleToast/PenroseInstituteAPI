@@ -6,7 +6,6 @@ import { ApolloServer } from "apollo-server-express"
 import { ArticleResolver } from "./resolvers/ArticleResolver"
 import { buildSchema } from "type-graphql"
 import express from "express"
-import pool from "./connection/connection"
 
 const bootstrapAPI = async () => {
     const port = process.env.PORT || 6969
@@ -21,10 +20,9 @@ const bootstrapAPI = async () => {
 
     // Run server
     app.listen({ port }, () => {
-        console.log(`API running at http://localhost:${port}${apolloServer.graphqlPath}!`)
+        console.log(`API running at http://localhost:${port}${apolloServer.graphqlPath} !`)
     })
 }
 
 export const app = express()
-app.locals.pool = pool
 bootstrapAPI()

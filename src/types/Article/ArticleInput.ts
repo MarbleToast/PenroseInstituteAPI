@@ -8,8 +8,11 @@ export class ArticleInput implements Partial<Article> {
     title: string
 
     @Field()
-    creationDate: Date
+    entryId: string
 
     @Field()
-    content: string
+    creationDate: Date
+
+    @Field({ nullable: true })
+    content?: string
 }

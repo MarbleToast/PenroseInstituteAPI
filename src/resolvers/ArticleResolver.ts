@@ -1,21 +1,25 @@
 import { Arg, Mutation, Query, Resolver } from "type-graphql"
-import { app } from ".."
+import pool from "../connection/connection"
 
 import { Article } from "../types/Article/Article"
 import { ArticleInput } from "../types/Article/ArticleInput"
 
 @Resolver(() => Article)
 export class ArticleResolver {
-    private items: Article[] = [{ content: "Hi", creationDate: new Date(), title: "whoa" }]
-
     @Query(() => Article, { nullable: true })
-    async getArticle(@Arg("title") titleToFind: string): Promise<Article | undefined> {
-        return await app.locals.pool.query("SELECT * FROM articles WHERE title = $1", [titleToFind])
+    async getArticle(@Arg("uuid") uuid: string): Promise<Article | undefined> {
+        const response = await pool.query("SELECT * FROM penrose.entries WHERE uuid = $1", [uuid])
+        if (response.rowCount === 0) {
+            return undefined
+        } else {
+            return response.rows[0]
+        }
     }
 
     @Query(() => [Article])
     async getArticles(): Promise<Article[]> {
-        return await this.items
+        const response = await pool.query("SELECT * FROM penrose.entries")
+        return response.rows
     }
 
     @Mutation(() => Article)
@@ -25,7 +29,7 @@ export class ArticleResolver {
             content: input.content,
             creationDate: new Date()
         })
-        await this.items.push(a)
+
         return a
     }
 }
